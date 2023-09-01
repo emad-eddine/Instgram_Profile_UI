@@ -2,30 +2,50 @@ package com.kichou.imad.instgramprofileui
 
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -44,6 +64,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ProfileScreen()
 {
+    var selectedTabIndex by remember {
+        mutableStateOf(0)
+    }
     Scaffold (
         modifier = Modifier
             .fillMaxSize(),
@@ -77,9 +100,64 @@ fun ProfileScreen()
                 otherFollowersNumber = 17
             )
 
+            FunctionalitySection()
+
+            StorySection(listOf(
+
+                StoryItem(storyTitle = "YouTube",
+                    storyIcon = R.drawable.youtube),
+
+                StoryItem(storyTitle = "Q&A",
+                    storyIcon = R.drawable.qa),
+
+                StoryItem(storyTitle = "Discord",
+                    storyIcon = R.drawable.discord),
+
+                StoryItem(storyTitle = "Telegram",
+                    storyIcon = R.drawable.telegram),
+
+            ))
 
 
+            PostTabView(
+                imageWithTexts = listOf(
+                    ImageWithText(
+                        image = painterResource(id = R.drawable.ic_grid),
+                        text = "Posts"
+                    ),
+                    ImageWithText(
+                        image = painterResource(id = R.drawable.ic_reels),
+                        text = "Reels"
+                    ),
+                    ImageWithText(
+                        image = painterResource(id = R.drawable.ic_igtv),
+                        text = "IGTV"
+                    ),
+                    ImageWithText(
+                        image = painterResource(id = R.drawable.profile),
+                        text = "Profile"
+                    ),
+                )
+            ) {
+                selectedTabIndex = it
+            }
+            when(selectedTabIndex) {
+                0 -> PostSection(
+                    posts = listOf(
+                        painterResource(id = R.drawable.kmm),
+                        painterResource(id = R.drawable.intermediate_dev),
+                        painterResource(id = R.drawable.master_logical_thinking),
+                        painterResource(id = R.drawable.bad_habits),
+                        painterResource(id = R.drawable.multiple_languages),
+                        painterResource(id = R.drawable.learn_coding_fast),
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
+
+
+
 
 
 
@@ -305,3 +383,179 @@ fun ProfileBioSection(
 }
 
 
+@Composable
+fun FunctionalitySection(){
+
+    Row (modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 10.dp, horizontal = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween){
+
+        Button(onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(15),
+            border = BorderStroke(width = 1.dp, color = Color.Gray)) {
+
+
+                Text(text = "Following",
+                    style = TextStyle(
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = Color.Black)
+
+                Icon(
+                    imageVector =Icons.Default.ArrowDropDown,
+                    contentDescription = "drop_down_arrow",
+                    modifier = Modifier.size(15.dp),
+                    tint = Color.Black
+                )
+
+
+        }
+
+        //
+
+        Button(onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(15),
+            border = BorderStroke(width = 1.dp, color = Color.Gray))  {
+
+
+                Text(text = "Messages",
+                    style = TextStyle(
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = Color.Black)
+
+
+
+        }
+
+        Button(onClick = { /*TODO*/ },
+            shape = RoundedCornerShape(15),
+            border = BorderStroke(width = 1.dp, color = Color.Gray)
+        )  {
+
+                Text(text = "Email",
+                    style = TextStyle(
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    ),
+                    color = Color.Black)
+
+        }
+
+
+
+    }
+
+}
+
+
+
+@Composable
+fun StorySection(stories : List<StoryItem>){
+
+    LazyRow(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 10.dp, horizontal = 20.dp)){
+
+        items(stories.size){
+
+            Column (modifier = Modifier.padding(end = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally){
+
+
+                Image(painter = painterResource(stories[it].storyIcon),
+                    contentDescription = stories[it].storyTitle,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(shape = CircleShape))
+
+                Text(text = stories[it].storyTitle,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 15.sp
+                    ),
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 5.dp)
+                )
+
+
+            }
+
+        }
+    }
+
+
+}
+
+
+
+@Composable
+fun PostTabView(
+    modifier: Modifier = Modifier,
+    imageWithTexts: List<ImageWithText>,
+    onTabSelected: (selectedIndex: Int) -> Unit
+) {
+    var selectedTabIndex by remember {
+        mutableStateOf(0)
+    }
+    val inactiveColor = Color(0xFF777777)
+    TabRow(
+        selectedTabIndex = selectedTabIndex,
+        containerColor = Color.Transparent,
+        contentColor = Color.Black,
+        modifier = modifier
+    ) {
+        imageWithTexts.forEachIndexed { index, item ->
+            Tab(
+                selected = selectedTabIndex == index,
+                selectedContentColor = Color.Black,
+                unselectedContentColor = inactiveColor,
+                onClick = {
+                    selectedTabIndex = index
+                    onTabSelected(index)
+                }
+            ) {
+                Icon(
+                    painter = item.image,
+                    contentDescription = item.text,
+                    tint = if(selectedTabIndex == index) Color.Black else inactiveColor,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .size(20.dp)
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun PostSection(
+    posts: List<Painter>,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = modifier
+            .scale(1.01f)
+    ) {
+        items(posts.size) {
+            Image(
+                painter = posts[it],
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .border(
+                        width = 1.dp,
+                        color = Color.White
+                    )
+            )
+        }
+    }
+}
